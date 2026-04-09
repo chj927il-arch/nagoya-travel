@@ -194,13 +194,16 @@ export default function TranslatorPanel() {
     setLoading(true);
     setResult("");
     try {
-      const res = await fetch("/api/translate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: input }),
-      });
+      const res = await fetch(
+        `https://api.mymemory.translated.net/get?q=${encodeURIComponent(input)}&langpair=ko|ja`
+      );
       const data = await res.json();
-      setResult(data.translated ?? "번역 실패");
+      const translated = data.responseData?.translatedText;
+      if (translated) {
+        setResult(translated);
+      } else {
+        setResult("번역 실패. 다시 시도해주세요.");
+      }
     } catch {
       setResult("오류가 발생했습니다. 다시 시도해주세요.");
     } finally {
